@@ -1,8 +1,5 @@
-<script>
-  import '../app.css'; // <-- สำคัญ!
-  import Layout from '$lib/components/Layout.svelte';
+<!-- src/routes/+layout.svelte -->
+<script lang="ts">
+  import { goto } from '$app/navigation';
+  goto('/admin/login');
 </script>
-
-<Layout>
-  <slot />
-</Layout>
