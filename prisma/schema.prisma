@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String   @id @default(cuid())
+  username   String   @unique
+  password   String   // Bcrypt hash
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Manga {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  description String?
+  coverUrl    String?
+  views       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  episodes    Episode[]
+}
+
+model Episode {
+  id         String   @id @default(cuid())
+  title      String
+  episodeNum Int
+  imageUrls  String   // ใช้ JSON.stringify([...]) เก็บภาพทั้งหมดใน string
+  releaseAt  DateTime?
+  status     String   @default("PENDING")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  mangaId    String
+  manga      Manga    @relation(fields: [mangaId], references: [id], onDelete: Cascade)
+}

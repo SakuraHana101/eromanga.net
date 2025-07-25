@@ -1,0 +1,11 @@
+[
+  {
+    "id": "bdc63973-4c31-4b43-9764-8205616d976b",
+    "title": "ตัวอย่างมังงะทดสอบ",
+    "coverUrl": "https://example.com/cover.jpg",
+    "pageUrls": [
+      "https://example.com/page1.jpg",
+      "https://example.com/page2.jpg"
+    ]
+  }
+]
