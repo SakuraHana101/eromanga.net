@@ -1,0 +1,9 @@
+
+name = "my-first-worker"  # หรือชื่อ worker ที่ตั้งไว้จริง
+main = "src/index.ts"     # << สำคัญ! บอกว่าไฟล์หลักอยู่ตรงไหน
+compatibility_date = "2025-07-25"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "eromanga_db"
+database_id = "35d422ed-324c-4016-a712-31a4878f25f0"

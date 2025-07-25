@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String    @id @default(uuid())
+  username   String    @unique
+  email      String    @unique
+  password   String
+  role       String    @default("USER")
+  isActive   Boolean   @default(true)
+  lastActive DateTime? @default(now())
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  logs       Log[]
+}
+
+model Manga {
+  id          String     @id @default(uuid())
+  title       String
+  slug        String     @unique
+  description String?
+  coverUrl    String?
+  rank        Int?
+  views       Int        @default(0)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  categories  Category[] @relation("MangaCategories")
+  tags        Tag[]      @relation("MangaTags")
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  mangas    Manga[]  @relation("MangaCategories")
+}
+
+model Tag {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  mangas    Manga[]  @relation("MangaTags")
+}
+
+model Log {
+  id        String   @id @default(uuid())
+  userId    String
+  action    String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Ad {
+  id          String   @id @default(uuid())
+  imageUrl    String
+  linkUrl     String
+  position    String
+  impressions Int      @default(0)
+  clicks      Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Schedule {
+  id          String   @id @default(uuid())
+  targetType  String
+  targetId    String
+  scheduledAt DateTime
+  createdAt   DateTime @default(now())
+}
+
+model Backup {
+  id        String   @id @default(uuid())
+  filePath  String
+  createdAt DateTime @default(now())
+}
+
+model Report {
+  id          String   @id @default(uuid())
+  type        String
+  description String
+  resolved    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
