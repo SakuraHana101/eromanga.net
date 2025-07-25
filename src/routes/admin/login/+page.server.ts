@@ -1,10 +1,10 @@
-// src/routes/login/+server.ts
+// src/routes/admin/login/+page.server.ts
 import type { Actions } from '@sveltejs/kit';
 import { redirect, fail } from '@sveltejs/kit';
 import bcrypt from 'bcryptjs';
-import { db } from '$lib/server/db';
-import { users } from '$lib/server/schema'; // ตาราง user ของคุณ
-import { eq } from 'drizzle-orm'; // ถ้าใช้ drizzle
+import { getDB } from '$lib/server/db';
+import { users } from '$lib/server/schema';
+import { eq } from 'drizzle-orm';
 
 export const actions: Actions = {
   default: async ({ request, cookies }) => {
@@ -19,11 +19,24 @@ export const actions: Actions = {
       return fail(400, { error: 'กรุณากรอกชื่อผู้ใช้และรหัสผ่าน' });
     }
 
-    // ค้นหาผู้ใช้จาก D1 database
-    const foundUsers = await db.select().from(users).where(eq(users.username, username)).limit(1);
+    let db;
+    try {
+      db = getDB();
+    } catch (e) {
+      console.error('DB connection error:', e);
+      return fail(500, { error: 'ไม่สามารถเชื่อมต่อฐานข้อมูลได้' });
+    }
 
+    // ค้นหาผู้ใช้จาก DB
+    const foundUsers = await db.select().from(users).where(eq(users.username, username)).limit(1);
     const user = foundUsers[0];
-    if (!user || !user.password || !(await bcrypt.compare(password, user.password))) {
+
+    if (!user || !user.password) {
+      return fail(401, { error: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง' });
+    }
+
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
       return fail(401, { error: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง' });
     }
 
